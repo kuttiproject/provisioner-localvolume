@@ -42,7 +42,7 @@ func (p *kuttiLocalProvisioner) Provision(ctx context.Context, options controlle
 	// Explicitly chmod created dir, so we know mode is set to 0755
 	// regardless of umask
 	if err := os.Chmod(newvolumepath, 0755); err != nil {
-		klog.Errorf("Could not chmod 0755 directoty '%v': %v", newvolumepath, err)
+		klog.Errorf("Could not chmod 0755 directory '%v': %v", newvolumepath, err)
 		return nil, controller.ProvisioningFinished, err
 	}
 

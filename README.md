@@ -3,6 +3,9 @@ An external dynamic provisioner for Kubernetes local persistent volumes.
 
 Current Version: 0.1.0
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/kuttiproject/provisioner-localvolume)](https://goreportcard.com/report/github.com/kuttiproject/provisioner-localvolume)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/golang-standards/project-layout)](https://pkg.go.dev/github.com/kuttiproject/provisioner-localvolume)
+
 ## Synopsis
 The `local` volume driver, which went stable in Kubernetes 1.14, represents 
 a mounted local storage device. It is meant to be used with PersistedVolumes,

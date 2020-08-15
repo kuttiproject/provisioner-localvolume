@@ -1,0 +1,206 @@
+# This file deploys an external volume provisioner, with the identifier
+#    kuttiproject/provisioner-localvolume
+#
+# The following API objects will be created:
+#    - clusterroles/kuttiproject-pvbinder
+#    - serviceaccounts/kuttiproject-provisioner in the kube-system namespace
+#    - clusterrolebindings/kuttiproject-provisioner-pvbinder
+#    - deployments/kuttiproject-provisioner-localvolume in the kube-system namespace
+#    - storageclasses/kuttiproject-local-delete in the default namespace
+#    - storageclasses/kuttiproject-local-retain in the default namespace
+#
+# The ClusterRole is needed for the permissions required by
+#    sigs.k8s.io/sig-storage-lib-external-provisioner/controller
+#
+# Two StorageClasses are deployed, with volumeReclaimPolicy of Delete and Retain
+# storageclasses/kuttiproject-local-delete is the default
+# Both have volumeBindingMode set to WaitForFirstConsumer, as recommended at
+# https://kubernetes.io/docs/concepts/storage/volumes/#local
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kuttiproject-pvbinder
+  labels:
+    app.kubernetes.io/name: provisioner-localvolume
+    app.kubernetes.io/part-of: kuttiproject
+rules:
+  - apiGroups:
+    - ""
+    resources:
+    - persistentvolumes
+    verbs:
+    - create
+    - delete
+    - get
+    - list
+    - update
+    - watch
+  - apiGroups:
+    - ""
+    resources:
+    - persistentvolumes/status
+    verbs:
+    - update
+  - apiGroups:
+    - ""
+    resources:
+    - persistentvolumeclaims
+    verbs:
+    - get
+    - list
+    - update
+    - watch
+  - apiGroups:
+    - ""
+    resources:
+    - persistentvolumeclaims/status
+    verbs:
+    - update
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    verbs:
+    - create
+    - delete
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - storage.k8s.io
+    resources:
+    - storageclasses
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - ""
+    resources:
+    - endpoints
+    - services
+    verbs:
+    - create
+    - delete
+    - get
+    - update
+    - list
+    - watch
+  - apiGroups:
+    - ""
+    resources:
+    - secrets
+    verbs:
+    - get
+  - apiGroups:
+    - ""
+    resources:
+    - nodes
+    verbs:
+    - get
+    - list
+  - apiGroups:
+    - ""
+    resources:
+    - events
+    verbs:
+    - watch
+  - apiGroups:
+    - ""
+    resources:
+    - events
+    verbs:
+    - create
+    - patch
+    - update
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kuttiproject-provisioner
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: provisioner-localvolume
+    app.kubernetes.io/part-of: kuttiproject
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kuttiproject-provisioner-pvbinder
+  labels:
+    app.kubernetes.io/name: provisioner-localvolume
+    app.kubernetes.io/part-of: kuttiproject
+subjects:
+  - kind: ServiceAccount
+    namespace: kube-system
+    name: kuttiproject-provisioner
+    apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: kuttiproject-pvbinder
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kuttiproject-provisioner-localvolume
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: provisioner-localvolume
+    app.kubernetes.io/part-of: kuttiproject
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: provisioner-localvolume
+      app.kubernetes.io/part-of: kuttiproject
+      app.kubernetes.io/component: external-provisioner
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: provisioner-localvolume
+        app.kubernetes.io/part-of: kuttiproject
+        app.kubernetes.io/component: external-provisioner
+    spec:
+      serviceAccount: kuttiproject-provisioner
+      containers:
+        - name: provisioner
+          image: kuttiproject/provisioner-localvolume:0.1.0
+          volumeMounts:
+            - mountPath: /kutti/vols
+              name: kuttivolsroot
+          env:
+            - name: KUTTI_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: KUTTI_ROOT_PATH
+              value: /kutti/vols
+      volumes:
+        - name: kuttivolsroot
+          hostPath:
+            path: /kutti/vols
+            type: DirectoryOrCreate
+---
+#  StorageClass for deleting PV after reclaim.
+#    This is the default storage class
+#    Remove the is-default-class annotation if required
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: kuttiproject-local-delete
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: kuttiproject/provisioner-localvolume
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+---
+#  StorageClass for retaining PV after reclaim
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: kuttiproject-local-retain
+provisioner: kuttiproject/provisioner-localvolume
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+---

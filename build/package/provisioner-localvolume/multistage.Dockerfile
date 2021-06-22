@@ -1,4 +1,4 @@
-FROM golang:1.14-alpine AS builder
+FROM golang:1.16-alpine AS builder
 ARG VERSION_STRING
 WORKDIR /kuttiproject/provisioner-local
 COPY . .

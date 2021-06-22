@@ -1,9 +1,8 @@
 # provisioner-localvolume
 An external dynamic provisioner for Kubernetes local persistent volumes.
 
-Current Version: 0.1.0
-
 [![Go Report Card](https://goreportcard.com/badge/github.com/kuttiproject/provisioner-localvolume)](https://goreportcard.com/report/github.com/kuttiproject/provisioner-localvolume)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/kuttiproject/provisioner-localvolume?include_prereleases)
 
 ## Synopsis
 The `local` volume driver, which went stable in Kubernetes 1.14, represents 
@@ -38,7 +37,7 @@ as per the normal rules.
 The reference implementation is published on the Docker Hub, as an image 
 called kuttiproject/provisioner-localvolume:<version>. The corresponding
 Kubernetes manifest file can be found in this repository, as 
-package/provisioner-localvolume/k8s/provisioner.yaml.
+deploy/provisioner-localvolume/provisioner.yaml.
 
 ## Manifest file notes
 The manifest file includes a ClusterRole and a corresponding ClusterRoleBinding.

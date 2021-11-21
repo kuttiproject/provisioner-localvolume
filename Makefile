@@ -1,13 +1,13 @@
 # Bump these on release, 
-# and for now update the deployment files under /deploy
-# and the README.md file.
+# and for now update the deployment files under /deploy.
+# The README.md file will auto-populate from the GitHub release.
 VERSION_MAJOR ?= 0
 VERSION_MINOR ?= 1
-BUILD_NUMBER  ?= 1
+BUILD_NUMBER  ?= 2
 
 VERSION_STRING = $(VERSION_MAJOR).$(VERSION_MINOR).$(BUILD_NUMBER)
 IMAGE_TAG ?= $(VERSION_STRING)
-REGISTRY_USER ?= kuttiproject
+REGISTRY_USER ?= quay.io/kuttiproject
 
 SOURCEFILES = cmd/kutti-localprovisioner/main.go pkg/localprovisioner/localprovisioner.go
 
@@ -38,3 +38,6 @@ rmi:
 out/kutti-localprovisioner: $(SOURCEFILES)
 	go mod tidy
 	CGO_ENABLED=0 go build -o out/kutti-localprovisioner -ldflags "-X main.version=${VERSION_STRING}" ./cmd/kutti-localprovisioner/
+
+.PHONY: provisioner
+provisioner: out/kutti-localprovisioner

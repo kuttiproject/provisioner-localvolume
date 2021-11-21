@@ -143,7 +143,7 @@ roleRef:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kuttiproject-provisioner-localvolume
+  name: kuttiproject-provisioner-local
   namespace: kube-system
   labels:
     app.kubernetes.io/name: provisioner-localvolume
@@ -165,7 +165,7 @@ spec:
       serviceAccount: kuttiproject-provisioner
       containers:
         - name: provisioner
-          image: kuttiproject/provisioner-localvolume:0.1.1
+          image: quay.io/kuttiproject/provisioner-localvolume:0.1.2
           volumeMounts:
             - mountPath: /kutti/vols
               name: kuttivolsroot

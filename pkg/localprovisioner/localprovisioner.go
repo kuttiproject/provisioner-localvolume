@@ -11,13 +11,13 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
-	"sigs.k8s.io/sig-storage-lib-external-provisioner/v6/controller"
+	"sigs.k8s.io/sig-storage-lib-external-provisioner/v8/controller"
 )
 
 const (
 	provisionerName         = "kuttiproject/provisioner-localvolume"
-	provisionedByAnnotation = "kuttiproject/provisionedBy"
-	provisionedOnAnnotation = "kuttiproject/provisionedOn"
+	provisionedByAnnotation = "kuttiproject.org/provisionedBy"
+	provisionedOnAnnotation = "kuttiproject.org/provisionedOn"
 )
 
 type kuttiLocalProvisioner struct {
@@ -123,7 +123,7 @@ func (p *kuttiLocalProvisioner) Delete(ctx context.Context, volume *corev1.Persi
 	// Remove underlying storage
 	volumepath := path.Join(p.rootPath, volume.Name)
 	if err := os.RemoveAll(volumepath); err != nil {
-		klog.Errorf("Problem removing PV underlyting directory %s: %v", volumepath, err)
+		klog.Errorf("Problem removing PV underlying directory %s: %v", volumepath, err)
 		return errors.Wrap(err, "problem removing PV source directory "+volumepath)
 	}
 
@@ -140,22 +140,14 @@ func RunProvisioner(ctx context.Context, nodename string, rootpath string) error
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		klog.Errorln("Could not fetch kube config from cluster.")
-		return errors.Wrap(err, "Could not fetch kube config from cluster.")
+		return errors.Wrap(err, "could not fetch kube config from cluster")
 	}
 
 	// Create a client from config
 	kubeclient, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		klog.Errorln("Could not create kube client from in-cluster config.")
-		return errors.Wrap(err, "Could not create kube client from in-cluster config.")
-	}
-
-	// Get server verion from client
-	//   because the provision controller needs it
-	kubeVersion, err := kubeclient.Discovery().ServerVersion()
-	if err != nil {
-		klog.Errorln("Could not fetch server version.")
-		return errors.Wrap(err, "Could not fetch server version.")
+		return errors.Wrap(err, "could not create kube client from in-cluster config")
 	}
 
 	localprovisioner := &kuttiLocalProvisioner{
@@ -168,7 +160,6 @@ func RunProvisioner(ctx context.Context, nodename string, rootpath string) error
 		kubeclient,
 		provisionerName,
 		localprovisioner,
-		kubeVersion.GitVersion,
 	)
 
 	klog.Infof("Controller created. Details:\n%+v\nRun commencing...", pc)

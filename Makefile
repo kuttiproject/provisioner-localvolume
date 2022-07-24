@@ -10,7 +10,7 @@ VERSION_STRING = $(VERSION_MAJOR).$(VERSION_MINOR).$(BUILD_NUMBER)$(PATCH_STRING
 IMAGE_TAG ?= $(VERSION_STRING)
 REGISTRY_USER ?= quay.io/kuttiproject
 
-SOURCEFILES = cmd/kutti-localprovisioner/main.go pkg/localprovisioner/localprovisioner.go
+SOURCEFILES = cmd/kutti-localprovisioner/main.go internal/pkg/localprovisioner/localprovisioner.go
 
 # Targets
 .PHONY: usage

@@ -5,7 +5,7 @@ import (
 	"flag"
 	"os"
 
-	"github.com/kuttiproject/provisioner-localvolume/pkg/localprovisioner"
+	"github.com/kuttiproject/provisioner-localvolume/internal/pkg/localprovisioner"
 	"k8s.io/klog"
 )
 

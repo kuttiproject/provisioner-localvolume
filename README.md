@@ -1,4 +1,5 @@
 # provisioner-localvolume
+
 An external dynamic provisioner for Kubernetes local persistent volumes.
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/kuttiproject/provisioner-localvolume)](https://goreportcard.com/report/github.com/kuttiproject/provisioner-localvolume)
@@ -11,13 +12,12 @@ and requires the volume to have a node affinity. This project provisions
 such volumes dynamically.
 
 ## Implementation
-This project uses the [sig-storage-lib-external-provisioner](https://github.com/kubernetes-sigs/sig-storage-lib-external-provisioner) library. It implements the Provisioner 
-interface defined in that library, and uses the supplied ProvisionController.
+This project uses the [sig-storage-lib-external-provisioner](https://github.com/kubernetes-sigs/sig-storage-lib-external-provisioner) library. It implements the Provisioner interface defined in that library, and uses the supplied ProvisionController.
 
 Like any other external provisioner, the project is an executable that runs
 in a container provisioned by Kubernetes. It takes two configuration 
-parameters: nodename, which is the name of the kubernetes node where it is
-scheduled, and rootpath, which is a directory on that node. The project 
+parameters: _nodename_, which is the name of the Kubernetes node where it is
+scheduled, and _rootpath_, which is a directory on that node. The project 
 creates subdirectories under its rootpath, and exposes these to Kubernetes
 as PersistentVolume objects. It attaches a nodeAffinity to these volumes,
 using the nodename.
@@ -34,10 +34,10 @@ PersistentVolume objects created on the original node will not be deleted
 dynamically. They will continue to work as normal, and may be manually deleted
 as per the normal rules.
 
-The reference implementation is published on the Docker Hub, as an image 
-called kuttiproject/provisioner-localvolume:<version>. The corresponding
-Kubernetes manifest file can be found in this repository, as 
-deploy/provisioner-localvolume/provisioner.yaml.
+The reference implementation is published on the Docker Hub and Quay.io, as
+an image called kuttiproject/provisioner-localvolume:<version>. The 
+corresponding Kubernetes manifest file can be found in this repository, at 
+[deploy/kubernetes/provisioner.yaml](deploy/kubernetes/provisioner.yaml).
 
 ## Manifest file notes
 The manifest file includes a ClusterRole and a corresponding ClusterRoleBinding.

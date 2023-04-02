@@ -6,12 +6,14 @@ import (
 	"path"
 
 	"github.com/pkg/errors"
+	"golang.org/x/exp/slices"
 	corev1 "k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
-	"sigs.k8s.io/sig-storage-lib-external-provisioner/v8/controller"
+	"sigs.k8s.io/sig-storage-lib-external-provisioner/v9/controller"
 )
 
 const (
@@ -23,6 +25,10 @@ const (
 type kuttiLocalProvisioner struct {
 	nodeName string // The hostname/nodename where the provisioner runs
 	rootPath string // The directory under which volume directories will be created
+}
+
+func (p *kuttiLocalProvisioner) ShouldProvision(ctx context.Context, pvc *v1.PersistentVolumeClaim) bool {
+	return slices.Contains(pvc.Spec.AccessModes, v1.ReadWriteOnce)
 }
 
 func (p *kuttiLocalProvisioner) Provision(ctx context.Context, options controller.ProvisionOptions) (*corev1.PersistentVolume, controller.ProvisioningState, error) {

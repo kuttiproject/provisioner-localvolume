@@ -2,14 +2,17 @@ Param(
     $VersionMajor = (property VERSION_MAJOR "0"),
     $VersionMinor = (property VERSION_MINOR "2"),
     $BuildNumber  = (property BUILD_NUMBER  "0"),
-    $PatchString  = (property PATCH_STRING  "-beta1"),
+    $PatchString  = (property PATCH_STRING  ""),
     $ImageTag     = (property IMAGE_TAG     ""),
-    $RegistryUser = (property REGISTRY_USER "quay.io/kuttiproject")
+    $RegistryUser = (property REGISTRY_USER "quay.io/kuttiproject"),
+    $Platforms    = (property PLATFORMS "linux/amd64,linux/arm,linux/arm64,linux/ppc64le,linux/s390x")
 )
 
 
 # Maintain semantic version in the parameters above
-# Also change in cmd/kutti/main.go
+# Also change in cmd/kutti-localprovisioner/main.go
+# and deploy/kubernetes/provisioner.yaml
+# The README.md file will auto-populate from the GitHub release
 $VersionString = "$($VersionMajor).$($VersionMinor).$($BuildNumber)$($PatchString)"
 If ($ImageTag -eq "") {
     $ImageTag = $VersionString
@@ -52,9 +55,26 @@ task image-multistage -Outputs "out/provisioner-localvolume-$($ImageTag).iid" `
         docker build -t $RegistryUser/provisioner-localvolume:$ImageTag `
                      -f build/package/container/multistage.Dockerfile `
                      --build-arg VERSION_STRING=$($VersionString) `
+                     --iidfile "out/provisioner-localvolume-$($ImageTag).iid" `
                      .
     }
 }
+
+# Synopsis: Build multi-arch provisioner image and push to registry
+task publishimage -Outputs "out/provisioner-localvolume-$($ImageTag).iid" `
+                  -Inputs ($($SourceFiles)+(Get-Item build/package/container/multistage.Dockerfile)) {
+    exec {
+        docker buildx build `
+            --push `
+            --platform=$Platforms `
+            -t $RegistryUser/provisioner-localvolume:$ImageTag `
+            -f build/package/container/multistage.Dockerfile `
+            --build-arg VERSION_STRING=$($VersionString) `
+            --iidfile "out/provisioner-localvolume-$($ImageTag).iid" `
+            .
+    }
+}
+
 
 # Synopsis: Clean locally built provisioner
 task cleanlocal {

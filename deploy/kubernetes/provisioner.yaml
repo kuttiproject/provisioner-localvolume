@@ -176,7 +176,7 @@ spec:
       serviceAccount: kutti-provisioner
       containers:
         - name: provisioner
-          image: quay.io/kuttiproject/provisioner-localvolume:0.2.0-beta1
+          image: quay.io/kuttiproject/provisioner-localvolume:0.2.0
           volumeMounts:
             - mountPath: /kutti/vols
               name: kuttivolsroot

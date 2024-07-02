@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM --platform=${BUILDPLATFORM}  golang:1.18-alpine AS builder
+FROM --platform=${BUILDPLATFORM}  golang:1.22-alpine AS builder
 ARG VERSION_STRING
 WORKDIR /kuttiproject/provisioner-local
 COPY . .

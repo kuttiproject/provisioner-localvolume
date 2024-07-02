@@ -1,10 +1,10 @@
 Param(
     $VersionMajor = (property VERSION_MAJOR "0"),
     $VersionMinor = (property VERSION_MINOR "2"),
-    $BuildNumber  = (property BUILD_NUMBER  "0"),
+    $BuildNumber  = (property BUILD_NUMBER  "1"),
     $PatchString  = (property PATCH_STRING  ""),
     $ImageTag     = (property IMAGE_TAG     ""),
-    $RegistryUser = (property REGISTRY_USER "quay.io/kuttiproject"),
+    $RegistryUser = (property REGISTRY_USER "kuttiproject"),
     $Platforms    = (property PLATFORMS "linux/amd64,linux/arm,linux/arm64,linux/ppc64le,linux/s390x")
 )
 

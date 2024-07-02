@@ -4,12 +4,12 @@
 # The README.md file will auto-populate from the GitHub release.
 VERSION_MAJOR ?= 0
 VERSION_MINOR ?= 2
-BUILD_NUMBER  ?= 0
+BUILD_NUMBER  ?= 1
 PATCH_STRING  ?= 
 
 VERSION_STRING = $(VERSION_MAJOR).$(VERSION_MINOR).$(BUILD_NUMBER)$(PATCH_STRING)
 IMAGE_TAG ?= $(VERSION_STRING)
-REGISTRY_USER ?= quay.io/kuttiproject
+REGISTRY_USER ?= kuttiproject
 
 PLATFORMS ?= linux/amd64,linux/arm,linux/arm64,linux/ppc64le,linux/s390x
 

@@ -8,12 +8,11 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/exp/slices"
 	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
-	"k8s.io/klog"
-	"sigs.k8s.io/sig-storage-lib-external-provisioner/v9/controller"
+	"k8s.io/klog/v2"
+	"sigs.k8s.io/sig-storage-lib-external-provisioner/v10/controller"
 )
 
 const (
@@ -27,8 +26,8 @@ type kuttiLocalProvisioner struct {
 	rootPath string // The directory under which volume directories will be created
 }
 
-func (p *kuttiLocalProvisioner) ShouldProvision(ctx context.Context, pvc *v1.PersistentVolumeClaim) bool {
-	return slices.Contains(pvc.Spec.AccessModes, v1.ReadWriteOnce)
+func (p *kuttiLocalProvisioner) ShouldProvision(ctx context.Context, pvc *corev1.PersistentVolumeClaim) bool {
+	return slices.Contains(pvc.Spec.AccessModes, corev1.ReadWriteOnce)
 }
 
 func (p *kuttiLocalProvisioner) Provision(ctx context.Context, options controller.ProvisionOptions) (*corev1.PersistentVolume, controller.ProvisioningState, error) {
@@ -163,6 +162,7 @@ func RunProvisioner(ctx context.Context, nodename string, rootpath string) error
 
 	// Create a controller with provisioner
 	pc := controller.NewProvisionController(
+		klog.FromContext(ctx),
 		kubeclient,
 		provisionerName,
 		localprovisioner,

@@ -12,7 +12,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
-	"sigs.k8s.io/sig-storage-lib-external-provisioner/v10/controller"
+	"sigs.k8s.io/sig-storage-lib-external-provisioner/v11/controller"
 )
 
 const (
@@ -162,7 +162,7 @@ func RunProvisioner(ctx context.Context, nodename string, rootpath string) error
 
 	// Create a controller with provisioner
 	pc := controller.NewProvisionController(
-		klog.FromContext(ctx),
+		ctx,
 		kubeclient,
 		provisionerName,
 		localprovisioner,

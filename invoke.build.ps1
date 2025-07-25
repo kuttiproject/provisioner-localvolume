@@ -1,7 +1,7 @@
 Param(
     $VersionMajor = (property VERSION_MAJOR "0"),
     $VersionMinor = (property VERSION_MINOR "2"),
-    $BuildNumber  = (property BUILD_NUMBER  "1"),
+    $BuildNumber  = (property BUILD_NUMBER  "2"),
     $PatchString  = (property PATCH_STRING  ""),
     $ImageTag     = (property IMAGE_TAG     ""),
     $RegistryUser = (property REGISTRY_USER "kuttiproject"),

@@ -12,7 +12,7 @@ import (
 // The linker loader will assign the current version string if built
 // with the makefile. The value here is a fallback in case "go install"
 // is used.
-var version string = "0.2.0-goinstall"
+var version string = "0.2.2-goinstall"
 
 func main() {
 	klog.InitFlags(nil)

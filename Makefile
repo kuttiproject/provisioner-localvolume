@@ -4,7 +4,7 @@
 # The README.md file will auto-populate from the GitHub release.
 VERSION_MAJOR ?= 0
 VERSION_MINOR ?= 2
-BUILD_NUMBER  ?= 1
+BUILD_NUMBER  ?= 2
 PATCH_STRING  ?= 
 
 VERSION_STRING = $(VERSION_MAJOR).$(VERSION_MINOR).$(BUILD_NUMBER)$(PATCH_STRING)
